@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work History List</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+  <h1>Work History</h1>
+  <a th:href="@{/work-history/add}" class="btn">Add New Work History</a>
+  <table>
+    <thead>
+    <tr>
+      <th>Company</th>
+      <th>Position</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="work : ${workHistoryList}">
+      <td th:text="${work.company}"></td>
+      <td th:text="${work.position}"></td>
+      <td th:text="${#temporals.format(work.startDate, 'dd-MM-yyyy')}"></td>
+      <td th:text="${work.endDate != null ? #temporals.format(work.endDate, 'dd-MM-yyyy') : 'Present'}"></td>
+      <td>
+        <a th:href="@{/work-history/edit/{id}(id=${work.id})}" class="btn btn-edit">Edit</a>
+        <a th:href="@{/work-history/delete/{id}(id=${work.id})}" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this work history entry?')">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

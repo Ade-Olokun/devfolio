@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Information List</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Contact Information</h1>
+    <a th:href="@{/contact-info/add}" class="btn">Add New Contact</a>
+    <table>
+        <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="contact : ${contactInfoList}">
+            <td th:text="${contact.fullName}"></td>
+            <td th:text="${contact.email}"></td>
+            <td th:text="${contact.phone}"></td>
+            <td>
+                <a th:href="@{/contact-info/edit/{id}(id=${contact.id})}" class="btn btn-edit">Edit</a>
+                <a th:href="@{/contact-info/delete/{id}(id=${contact.id})}" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this contact?')">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

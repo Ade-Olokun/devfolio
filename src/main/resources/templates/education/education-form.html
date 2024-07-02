@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Education</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Add Education</h1>
+    <form th:action="@{/education/add}" method="post">
+        <div class="form-group">
+            <label for="institution">Institution:</label>
+            <input type="text" id="institution" name="institution" required>
+        </div>
+        <div class="form-group">
+            <label for="degree">Degree:</label>
+            <input type="text" id="degree" name="degree" required>
+        </div>
+        <div class="form-group">
+            <label for="fieldOfStudy">Field of Study:</label>
+            <input type="text" id="fieldOfStudy" name="fieldOfStudy" required>
+        </div>
+        <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" required>
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" name="endDate">
+        </div>
+        <button type="submit" class="btn">Save</button>
+    </form>
+</div>
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

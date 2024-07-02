@@ -7,13 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/work-history")
+@Controller
+@RequestMapping("/work-history")
 public class WorkHistoryController {
 
     private final WorkHistoryService workHistoryService;
@@ -23,58 +26,64 @@ public class WorkHistoryController {
         this.workHistoryService = workHistoryService;
     }
 
-    @PostMapping
-    public ResponseEntity<WorkHistory> createWorkHistory(@Valid @RequestBody WorkHistory workHistory) {
-        WorkHistory createdWorkHistory = workHistoryService.createWorkHistory(workHistory);
-        return new ResponseEntity<>(createdWorkHistory, HttpStatus.CREATED);
+    @GetMapping
+    public String listWorkHistory(Model model) {
+        List<WorkHistory> workHistoryList = workHistoryService.getAllWorkHistory();
+        if (workHistoryList.isEmpty()) {
+            workHistoryList = workHistoryService.createDefaultWorkHistory();
+        }
+        model.addAttribute("workHistoryList", workHistoryList);
+        return "work-history/work-history-list";
     }
 
-    @GetMapping
+    @GetMapping("/add")
+    public String showWorkHistoryForm(Model model) {
+        model.addAttribute("workHistory", new WorkHistory());
+        return "work-history/work-history-form";
+    }
+
+    @PostMapping("/add")
+    public String addWorkHistory(@Valid @ModelAttribute WorkHistory workHistory, BindingResult result) {
+        if (result.hasErrors()) {
+            return "work-history/work-history-form";
+        }
+        workHistoryService.createWorkHistory(workHistory);
+        return "redirect:/work-history";
+    }
+
+    @GetMapping("/api")
+    @ResponseBody
     public ResponseEntity<List<WorkHistory>> getAllWorkHistory() {
         List<WorkHistory> workHistoryList = workHistoryService.getAllWorkHistory();
         return new ResponseEntity<>(workHistoryList, HttpStatus.OK);
     }
 
     @GetMapping("/paginated")
+    @ResponseBody
     public ResponseEntity<Page<WorkHistory>> getPaginatedWorkHistory(Pageable pageable) {
         Page<WorkHistory> workHistoryPage = workHistoryService.getWorkHistoryPaginated(pageable);
         return new ResponseEntity<>(workHistoryPage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @ResponseBody
     public ResponseEntity<WorkHistory> getWorkHistoryById(@PathVariable Long id) {
         return workHistoryService.getWorkHistoryById(id)
                 .map(workHistory -> new ResponseEntity<>(workHistory, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/contact-info/{contactInfoId}")
-    public ResponseEntity<List<WorkHistory>> getWorkHistoryByContactInfoId(@PathVariable Long contactInfoId) {
-        List<WorkHistory> workHistoryList = workHistoryService.getWorkHistoryByContactInfoId(contactInfoId);
-        return new ResponseEntity<>(workHistoryList, HttpStatus.OK);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<WorkHistory>> searchWorkHistoryByCompany(@RequestParam String company) {
-        List<WorkHistory> workHistoryList = workHistoryService.getWorkHistoryByCompanyContaining(company);
-        return new ResponseEntity<>(workHistoryList, HttpStatus.OK);
-    }
-
     @PutMapping("/{id}")
+    @ResponseBody
     public ResponseEntity<WorkHistory> updateWorkHistory(@PathVariable Long id, @Valid @RequestBody WorkHistory workHistory) {
         WorkHistory updatedWorkHistory = workHistoryService.updateWorkHistoryById(id, workHistory);
         return new ResponseEntity<>(updatedWorkHistory, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseBody
     public ResponseEntity<Void> deleteWorkHistory(@PathVariable Long id) {
         workHistoryService.deleteWorkHistoryById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PostMapping("/default")
-    public ResponseEntity<List<WorkHistory>> createDefaultWorkHistory() {
-        List<WorkHistory> defaultWorkHistory = workHistoryService.createDefaultWorkHistory();
-        return new ResponseEntity<>(defaultWorkHistory, HttpStatus.CREATED);
     }
 }
